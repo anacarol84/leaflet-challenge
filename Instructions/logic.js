@@ -9,38 +9,37 @@ var map = L.map("map", {
 var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 
 // Perform a GET request to the query URL
-d3.json(queryUrl).then(function(data) {
+d3.json(queryUrl).then(function (data) {
 
-    //Earthquake
-    
+  //Earthquake data
+
   L.geoJSON(data, {
 
     // Create circle markers
-      pointToLayer: function (feature, latlng) {
-        var geojsonMarkerOptions = {
-          radius: 3*feature.properties.mag,
-          stroke: true,
-          //fillColor: "#ff7800",
-          fillColor: fillColor(feature),
-          color: "#000000",
-          weight: 1,
-          opacity: .8,
-          fillOpacity: .8
-    };
+    pointToLayer: function (feature, latlng) {
+      var geojsonMarkerOptions = {
+        radius: 3 * feature.properties.mag,
+        stroke: true,
+        //fillColor: "#ff7800",
+        fillColor: fillColor(feature),
+        color: "#000000",
+        weight: 1,
+        opacity: .8,
+        fillOpacity: .8
+      };
       return L.circleMarker(latlng, geojsonMarkerOptions);
     },
-  
-  onEachFeature: function (feature, layer) {
-    return layer.bindPopup(`<strong>Place:</strong> ${feature.properties.place}<br><strong>Magnitude:</strong> ${feature.properties.mag}`);
-  }
-  }).addTo(map);
-  
-    console.log(data)
-  });
 
+    onEachFeature: function (feature, layer) {
+      return layer.bindPopup(`<strong>Place:</strong> ${feature.properties.place}<br><strong>Magnitude:</strong> ${feature.properties.mag}`);
+    }
+  }).addTo(map);
+
+  console.log(data)
+});
 
 // Function to define marker color based on earthquake magnitude
-var colors = ["#7FFF00", "#dfedbe", "#eede9f", "#FF8C00", "	#FA8072", "#FF0000"]
+var colors = ["#7FFF00", "#dfedbe", "#eede9f", "#FF8C00", "#FA8072", "#FF0000"]
 function fillColor(feature) {
   var mag = feature.properties.mag;
   if (mag <= 1) {
@@ -63,7 +62,7 @@ function fillColor(feature) {
   }
 }
 
-// Adding a tile layer (the background map image) to our map
+
 // We use the addTo method to add objects to our map
 L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
   attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
@@ -74,7 +73,7 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
   accessToken: API_KEY
 }).addTo(map);
 
-
+// Adding a tile layer (the background map image) to our map (optional) - I did not like this style
 // var darkmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
 //     attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
 //     maxZoom: 18,
@@ -83,18 +82,18 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 //   }).addTo(map)
 
 // Create the legend
-var legend = L.control({position: 'bottomright'});
+var legend = L.control({ position: 'bottomright' });
 
 //Then add all the details for the legend
 legend.onAdd = function () {
   var div = L.DomUtil.create("div", "info legend");
   var grades = [-10, 10, 30, 50, 70, 90];
-  var color = ["#00ccbc","#90eb9d","#f9d057","#f29e2e","#e76818","#d7191c"];
+  var color = ["#00ccbc", "#90eb9d", "#f9d057", "#f29e2e", "#e76818", "#d7191c"];
 
   // loop through our density intervals and generate a label with a colored square for each interval
   for (var i = 0; i < grades.length; i++) {
-    div.innerHTML +=
-      '<p style="margin-left: 15px">' + '<i style="background:' + color[i] + ' "></i>' + '&nbsp;&nbsp;' + grades[i]+ '<\p>';
+    div.innerHTML += "<i style='background: " + colors[i] + "'></i> "
+      + grades[i] + (grades[i + 1] ? "&ndash;" + grades[i + 1] + "<br>" : "+");
   }
 
   return div;
@@ -103,14 +102,7 @@ legend.onAdd = function () {
 //Add the legend by default
 legend.addTo(map)
 
-// //Get the tectonic plates
-//   var tectonicPlates = new L.LayerGroup();
 
-//   d3.json(
-//     "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json"
-//   ).then(function (tectonicPlateData) {
-//     L.geoJson(tectonicPlateData).addTo(tectonicPlates);
-//     tectonicPlates.addTo(map);
-//     console.log(tectonicPlates);
-//   });
+
+
 
